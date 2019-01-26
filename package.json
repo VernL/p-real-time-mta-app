@@ -4,7 +4,7 @@
   "description": "An app to show the MTA subway routes that have real time data available",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/VernL/p-real-time-mta-app/issues"
   },
-  "homepage": "https://github.com/VernL/p-real-time-mta-app#readme"
+  "homepage": "https://github.com/VernL/p-real-time-mta-app#readme",
+  "dependencies": {
+    "await-to-js": "^2.1.1",
+    "axios": "^0.18.0",
+    "prettier": "^1.16.1"
+  }
 }
