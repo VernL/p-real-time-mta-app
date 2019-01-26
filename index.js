@@ -2,6 +2,7 @@ const axios = require("axios");
 const { to } = require("await-to-js");
 const process = require("process");
 const prompts = require("prompts");
+const csv = require("fast-csv");
 
 async function main() {
   const [lineErr, subwayLines] = await to(getSubwayLines());
@@ -28,6 +29,10 @@ async function main() {
   }
 
   console.log(stations);
+
+  const stops = await loadStopsFromFile();
+
+  console.log(stops);
 }
 
 /**
@@ -77,6 +82,20 @@ function getStationsByLine(lineId) {
     .then(function(res) {
       return res.data;
     });
+}
+
+function loadStopsFromFile() {
+  return new Promise(resolve => {
+    const dataArray = [];
+    csv
+      .fromPath("./stops.txt", { headers: true })
+      .on("data", function(data) {
+        dataArray.push(data);
+      })
+      .on("end", function() {
+        resolve(dataArray);
+      });
+  });
 }
 
 main().then(() => console.log("Thanks, see you next time!"));
