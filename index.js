@@ -4,9 +4,9 @@ const process = require("process");
 const prompts = require("prompts");
 
 async function main() {
-  const [err, subwayLines] = await to(getSubwayLines());
+  const [lineErr, subwayLines] = await to(getSubwayLines());
 
-  if (err) {
+  if (lineErr) {
     console.log(
       "Sorry, there was an error fetching the sub waylines. Please try again!"
     );
@@ -17,6 +17,17 @@ async function main() {
   const selectedLineId = await getUserSelectedLineId(subwayLines);
 
   console.log(selectedLineId);
+
+  const [stopsErr, stations] = await to(getStationsByLine(selectedLineId));
+
+  if (stopsErr) {
+    console.log(
+      "Sorry, there was an error fetching the stops. Please try again!"
+    );
+    process.exit(0); // exit gracefully
+  }
+
+  console.log(stations);
 }
 
 /**
@@ -42,12 +53,30 @@ function getSubwayLines() {
  * @return {Promise} returns an objected with the selected id
  */
 async function getUserSelectedLineId(subwayLines) {
-  return await prompts({
+  const userInput = await prompts({
     type: "text",
     name: "selectedLineId",
     message: "Please enter a subway line id from the above list",
     validate: selectedLineId => subwayLines.includes(selectedLineId)
   });
+
+  return userInput.selectedLineId;
+}
+
+/**
+ * Get stations by Lines
+ *
+ * @return {Promise} returns an array of subway line objects
+ */
+function getStationsByLine(lineId) {
+  console.log(lineId);
+  return axios
+    .get(
+      `http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getStationsByLine/${lineId}`
+    )
+    .then(function(res) {
+      return res.data;
+    });
 }
 
 main().then(() => console.log("Thanks, see you next time!"));
