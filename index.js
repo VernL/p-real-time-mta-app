@@ -62,6 +62,7 @@ async function getUserSelectedLineId(subwayLines) {
 /**
  * Returns a promise that resolves with an array of subway line ids
  * @param {string} lineId
+ *
  * @return {Promise}
  */
 function getStationsByLine(lineId) {
@@ -97,8 +98,8 @@ function extractStopIds(stations) {
 }
 
 /**
- *  Returns a promise that resolves into an array of stops for the selected route
- *  @param {array} stopIds - array of stopIds
+ * Returns a promise that resolves into an array of stops for the selected route
+ * @param {array} stopIds - array of stopIds
  *
  * @return {Promise}
  */
