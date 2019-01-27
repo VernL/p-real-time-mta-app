@@ -28,6 +28,8 @@ async function main() {
     process.exit(0); // exit gracefully
   }
 
+  const stopIds = extractStopIds(stations);
+
   console.log(stations);
 
   const stops = await loadStopsFromFile();
@@ -82,6 +84,21 @@ function getStationsByLine(lineId) {
     .then(function(res) {
       return res.data;
     });
+}
+
+/**
+ * Extract Stop Ids
+ *
+ * @return {Array} returns an array of subway stop ids
+ */
+function extractStopIds(stations) {
+  const stopIds = [];
+  stations.forEach(borough => {
+    borough["stations"].forEach(station => {
+      stopIds.push(station.id);
+    });
+  });
+  return stopIds;
 }
 
 function loadStopsFromFile() {
