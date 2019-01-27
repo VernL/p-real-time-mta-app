@@ -1,7 +1,7 @@
 {
   "name": "p-real-time-mta-app",
   "version": "1.0.0",
-  "description": "An app to show the MTA subway routes that have real time data available",
+  "description": "An app that prints MTA subway stops for routes that have real time data",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/VernL/p-real-time-mta-app.git"
   },
   "author": "Vernon Lillies",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/VernL/p-real-time-mta-app/issues"
   },
