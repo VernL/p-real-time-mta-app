@@ -38,9 +38,9 @@ async function main() {
 }
 
 /**
- * Get Subway Lines
+ * Returns a promise that resolves with an array of subway line objects
  *
- * @return {Promise} returns an array of subway line objects
+ * @return {Promise}
  */
 function getSubwayLines() {
   return axios
@@ -55,9 +55,10 @@ function getSubwayLines() {
 }
 
 /**
- * Get User Selected Subway Line Id
+ * Returns the user selected line id
+ * @param {array} subwayLines - an array of subway line objects
  *
- * @return {Promise} returns an objected with the selected id
+ * @return {string}
  */
 async function getUserSelectedLineId(subwayLines) {
   const userInput = await prompts({
@@ -71,9 +72,9 @@ async function getUserSelectedLineId(subwayLines) {
 }
 
 /**
- * Get stations by Lines
- *
- * @return {Promise} returns an array of subway line objects
+ * Returns a promise that resolves with an array of subway line ids
+ * @param {string} lineId
+ * @return {Promise}
  */
 function getStationsByLine(lineId) {
   console.log(lineId);
@@ -87,9 +88,10 @@ function getStationsByLine(lineId) {
 }
 
 /**
- * Extract Stop Ids
+ * Returns an array of subway stop ids for the selected route
+ * @param  {array} stations
  *
- * @return {Array} returns an array of subway stop ids
+ * @return {array}
  */
 function extractStopIds(stations) {
   const stopIds = [];
@@ -101,6 +103,12 @@ function extractStopIds(stations) {
   return stopIds;
 }
 
+/**
+ *  Returns a promise that resolves into an array of stops for the selected route
+ *  @param {array} stopIds - array of stopIds
+ *
+ * @return {Promise}
+ */
 function loadMatchingStopsFromFile(stopIds) {
   return new Promise(resolve => {
     const dataArray = [];
