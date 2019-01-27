@@ -35,6 +35,8 @@ async function main() {
   const stops = await loadMatchingStopsFromFile(stopIds);
 
   console.log(stops);
+
+  printStopDetails(selectedLineId, stops);
 }
 
 /**
@@ -122,6 +124,20 @@ function loadMatchingStopsFromFile(stopIds) {
       .on("end", function() {
         resolve(dataArray);
       });
+  });
+}
+
+/**
+ *  Prints the stops for the selected route
+ *  @param {string} selectedLineId
+ *  @param {array} stops
+ */
+function printStopDetails(selectedLineId, stops) {
+  console.log(`Stops of route ${selectedLineId}:`);
+  stops.forEach(stop => {
+    console.log(
+      `- ${stop.stop_name} (${stop.stop_id}): ${stop.stop_lat},${stop.stop_lon}`
+    );
   });
 }
 
