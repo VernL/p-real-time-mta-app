@@ -1,41 +1,14 @@
 const axios = require("axios");
-const { to } = require("await-to-js");
 const process = require("process");
 const prompts = require("prompts");
 const csv = require("fast-csv");
 
 async function main() {
-  const [lineErr, subwayLines] = await to(getSubwayLines());
-
-  if (lineErr) {
-    console.log(
-      "Sorry, there was an error fetching the sub waylines. Please try again!"
-    );
-    process.exit(0); // exit gracefully
-  }
-
-  console.log(subwayLines.join());
+  const subwayLines = await getSubwayLines();
   const selectedLineId = await getUserSelectedLineId(subwayLines);
-
-  console.log(selectedLineId);
-
-  const [stopsErr, stations] = await to(getStationsByLine(selectedLineId));
-
-  if (stopsErr) {
-    console.log(
-      "Sorry, there was an error fetching the stops. Please try again!"
-    );
-    process.exit(0); // exit gracefully
-  }
-
+  const stations = await getStationsByLine(selectedLineId);
   const stopIds = extractStopIds(stations);
-
-  console.log(stations);
-
   const stops = await loadMatchingStopsFromFile(stopIds);
-
-  console.log(stops);
-
   printStopDetails(selectedLineId, stops);
 }
 
@@ -49,10 +22,16 @@ function getSubwayLines() {
     .get(
       "http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getSubwaylines"
     )
-    .then(function(res) {
+    .then(res => {
       return res.data.map(el => {
         return el.id;
       });
+    })
+    .catch(() => {
+      console.log(
+        "Sorry, there was an error fetching the subway lines. Please try again!"
+      );
+      process.exit(0); // exit gracefully
     });
 }
 
@@ -63,6 +42,7 @@ function getSubwayLines() {
  * @return {string}
  */
 async function getUserSelectedLineId(subwayLines) {
+  console.log(subwayLines.join());
   const userInput = await prompts({
     type: "text",
     name: "selectedLineId",
@@ -79,13 +59,18 @@ async function getUserSelectedLineId(subwayLines) {
  * @return {Promise}
  */
 function getStationsByLine(lineId) {
-  console.log(lineId);
   return axios
     .get(
       `http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getStationsByLine/${lineId}`
     )
-    .then(function(res) {
+    .then(res => {
       return JSON.parse(res.data);
+    })
+    .catch(() => {
+      console.log(
+        "Sorry, there was an error fetching the stops. Please try again!"
+      );
+      process.exit(0); // exit gracefully
     });
 }
 
