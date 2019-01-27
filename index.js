@@ -3,7 +3,13 @@ const process = require("process");
 const prompts = require("prompts");
 const csv = require("fast-csv");
 
-async function main() {
+printRealTimeMtaStops().then(() => console.log("Thanks, see you next time!"));
+
+/**
+ * Prints the stop details for the route selected by the user
+ *
+ */
+async function printRealTimeMtaStops() {
   const subwayLines = await getSubwayLines();
   const selectedLineId = await getUserSelectedLineId(subwayLines);
   const stations = await getStationsByLine(selectedLineId);
@@ -125,5 +131,3 @@ function printStopDetails(selectedLineId, stops) {
     );
   });
 }
-
-main().then(() => console.log("Thanks, see you next time!"));
