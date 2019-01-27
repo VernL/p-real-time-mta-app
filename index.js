@@ -32,7 +32,7 @@ async function main() {
 
   console.log(stations);
 
-  const stops = await loadStopsFromFile();
+  const stops = await loadMatchingStopsFromFile(stopIds);
 
   console.log(stops);
 }
@@ -101,13 +101,15 @@ function extractStopIds(stations) {
   return stopIds;
 }
 
-function loadStopsFromFile() {
+function loadMatchingStopsFromFile(stopIds) {
   return new Promise(resolve => {
     const dataArray = [];
     csv
       .fromPath("./stops.txt", { headers: true })
       .on("data", function(data) {
-        dataArray.push(data);
+        if (stopIds.includes(data.stop_id)) {
+          dataArray.push(data);
+        }
       })
       .on("end", function() {
         resolve(dataArray);
