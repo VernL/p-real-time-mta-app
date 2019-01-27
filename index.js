@@ -82,7 +82,7 @@ function getStationsByLine(lineId) {
       `http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getStationsByLine/${lineId}`
     )
     .then(function(res) {
-      return res.data;
+      return JSON.parse(res.data);
     });
 }
 
