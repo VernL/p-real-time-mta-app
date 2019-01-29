@@ -19,7 +19,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "fast-csv": "^2.4.1",
-    "prettier": "^1.16.1",
     "prompts": "^2.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.1"
   }
 }
