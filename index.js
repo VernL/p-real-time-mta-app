@@ -1,7 +1,8 @@
 const axios = require("axios");
-const process = require("process");
 const prompts = require("prompts");
 const csv = require("fast-csv");
+
+const baseUrl = "http://traintimelb-367443097.us-east-1.elb.amazonaws.com";
 
 printRealTimeMtaStops().then(() => console.log("Thanks, see you next time!"));
 
@@ -10,35 +11,22 @@ printRealTimeMtaStops().then(() => console.log("Thanks, see you next time!"));
  *
  */
 async function printRealTimeMtaStops() {
-  const subwayLines = await getSubwayLines();
-  const selectedLineId = await getUserSelectedLineId(subwayLines);
-  const stationsByLine = await getStationsByLine(selectedLineId);
-  const stopIds = extractStopIds(stationsByLine);
-  const stops = await loadMatchingStopsFromFile(stopIds);
-  printStopDetails(selectedLineId, stops);
-}
-
-/**
- * Returns a promise that resolves with an array of subway line objects
- *
- * @return {Promise}
- */
-function getSubwayLines() {
-  return axios
-    .get(
-      "http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getSubwaylines"
-    )
-    .then(res => {
-      return res.data.map(el => {
-        return el.id;
-      });
-    })
-    .catch(() => {
-      console.log(
-        "Sorry, there was an error fetching the subway lines. Please try again!"
-      );
-      process.exit(0); // exit gracefully
-    });
+  try {
+    const getSubwayLinesResponse = await axios(`${baseUrl}/getSubwaylines`);
+    const subwayLineIds = getSubwayLinesResponse.data.map(
+      subwayLine => subwayLine.id
+    );
+    const selectedLineId = await getUserSelectedLineId(subwayLineIds);
+    const getStationsByLineResponse = await axios(
+      `${baseUrl}/getStationsByLine/${selectedLineId}`
+    );
+    const stationsByLine = JSON.parse(getStationsByLineResponse.data);
+    const stopIds = extractStopIds(stationsByLine);
+    const stops = await loadMatchingStopsFromFile(stopIds);
+    printStopDetails(selectedLineId, stops);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 /**
@@ -57,28 +45,6 @@ async function getUserSelectedLineId(subwayLines) {
   });
 
   return userInput.selectedLineId;
-}
-
-/**
- * Returns a promise that resolves with an array of subway line ids
- * @param {string} lineId
- *
- * @return {Promise}
- */
-function getStationsByLine(lineId) {
-  return axios
-    .get(
-      `http://traintimelb-367443097.us-east-1.elb.amazonaws.com/getStationsByLine/${lineId}`
-    )
-    .then(res => {
-      return JSON.parse(res.data);
-    })
-    .catch(() => {
-      console.log(
-        "Sorry, there was an error fetching the stops. Please try again!"
-      );
-      process.exit(0); // exit gracefully
-    });
 }
 
 /**
