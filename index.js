@@ -12,8 +12,8 @@ printRealTimeMtaStops().then(() => console.log("Thanks, see you next time!"));
 async function printRealTimeMtaStops() {
   const subwayLines = await getSubwayLines();
   const selectedLineId = await getUserSelectedLineId(subwayLines);
-  const stations = await getStationsByLine(selectedLineId);
-  const stopIds = extractStopIds(stations);
+  const stationsByLine = await getStationsByLine(selectedLineId);
+  const stopIds = extractStopIds(stationsByLine);
   const stops = await loadMatchingStopsFromFile(stopIds);
   printStopDetails(selectedLineId, stops);
 }
@@ -83,18 +83,14 @@ function getStationsByLine(lineId) {
 
 /**
  * Returns an array of subway stop ids for the selected route
- * @param  {array} stations
+ * @param  {array} stationsByLine
  *
  * @return {array}
  */
-function extractStopIds(stations) {
-  const stopIds = [];
-  stations.forEach(borough => {
-    borough["stations"].forEach(station => {
-      stopIds.push(station.id);
-    });
-  });
-  return stopIds;
+function extractStopIds(stationsByLine) {
+  return stationsByLine.reduce((acc, cur) => {
+    return acc.concat(cur.stations.map(station => station.id));
+  }, []);
 }
 
 /**
