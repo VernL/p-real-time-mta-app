@@ -1,6 +1,7 @@
 const axios = require("axios");
 const prompts = require("prompts");
 const csv = require("fast-csv");
+const fs = require("fs");
 
 const baseUrl = "http://traintimelb-367443097.us-east-1.elb.amazonaws.com";
 const stopsFilePath = "data/stops.txt";
@@ -12,6 +13,7 @@ const stopsFilePath = "data/stops.txt";
  */
 async function getRealTimeMTA() {
   try {
+    fs.accessSync(stopsFilePath, fs.F_OK);
     const getSubwayLinesResponse = await axios(`${baseUrl}/getSubwaylines`);
     const subwayLineIds = getSubwayLinesResponse.data.map(
       subwayLine => subwayLine.id
@@ -26,7 +28,13 @@ async function getRealTimeMTA() {
 
     return { selectedSubwayLineId, stops };
   } catch (err) {
-    throw new Error(`There was a problem getting MTA data: ${err}`);
+    if (err.code === "ENOENT") {
+      throw Error(
+        "stops.txt not found! Please place it in the data folder and try again."
+      );
+    } else {
+      throw Error(`There was a problem getting MTA data: ${err}`);
+    }
   }
 }
 
