@@ -8,6 +8,7 @@ const stopsFilePath = "data/stops.txt";
 
 /**
  * Returns the selected subway line id and the stop details
+ * @throws if stops file does not exist or if an error occurs
  *
  * @return {object} selectedSubwayLineId, stopIds
  */
